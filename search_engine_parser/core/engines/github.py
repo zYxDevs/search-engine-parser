@@ -21,10 +21,7 @@ class Search(BaseSearch):
         "host of source code in the world."
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["q"] = query
-        params["p"] = page
-        params["type"] = kwargs.get("type_", None)
+        params = {"q": query, "p": page, "type": kwargs.get("type_")}
         self.type = params["type"]
         return params
 

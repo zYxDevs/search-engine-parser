@@ -20,13 +20,13 @@ class Search(BaseSearch):
         "currently serving more than 30 million searches per day."
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["q"] = query
-        params["s"] = 0 if (page < 2) else (((page-1) * 50) - 20)
-        params["dc"] = offset
-        params["o"] = "json"
-        params["api"] = "d.js"
-        return params
+        return {
+            "q": query,
+            "s": 0 if page < 2 else ((page - 1) * 50) - 20,
+            "dc": offset,
+            "o": "json",
+            "api": "d.js",
+        }
 
     def parse_soup(self, soup):
         """
@@ -62,10 +62,7 @@ class Search(BaseSearch):
                 rdict['links'] = None
         if return_type in (ReturnType.FULL, ReturnType.DESCRIPTION):
             desc = single_result.find(class_='result__snippet')
-            if desc is not None:
-                rdict["descriptions"] = desc.text
-            else:
-                rdict["descriptions"] = ""
+            rdict["descriptions"] = desc.text if desc is not None else ""
         if rdict['links'] is None:
             rdict = None
 

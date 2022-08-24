@@ -16,13 +16,7 @@ class Search(BaseSearch):
         "10%, even though Bing is the default search engine on Windows PCs."
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["q"] = query
-        params["offset"] = 0
-        params["first"] = offset
-        params["count"] = 10
-        params["FORM"] = "PERE"
-        return params
+        return {"q": query, "offset": 0, "first": offset, "count": 10, "FORM": "PERE"}
 
     def parse_soup(self, soup):
         """

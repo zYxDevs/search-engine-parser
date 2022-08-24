@@ -22,11 +22,7 @@ class Search(BaseSearch):
     """Override get_search_url"""
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["wd"] = query
-        params["pn"] = (page - 1) * 10
-        params["oq"] = query
-        return params
+        return {"wd": query, "pn": (page - 1) * 10, "oq": query}
 
     def parse_soup(self, soup):
         """
@@ -49,10 +45,7 @@ class Search(BaseSearch):
         """
         rdict = SearchItem()
         if return_type in (ReturnType.FULL, return_type.TITLE):
-            h3_tag = single_result.find('h3')
-
-            # sometimes h3 tag is not found
-            if h3_tag:
+            if h3_tag := single_result.find('h3'):
                 rdict["title"] = h3_tag.text
 
         if return_type in (ReturnType.FULL, ReturnType.LINK):
@@ -62,5 +55,5 @@ class Search(BaseSearch):
 
         if return_type in (ReturnType.FULL, return_type.DESCRIPTION):
             desc = single_result.find('div', class_='c-abstract')
-            rdict["descriptions"] = desc if desc else ''
+            rdict["descriptions"] = desc or ''
             return rdict

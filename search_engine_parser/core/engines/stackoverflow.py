@@ -19,11 +19,7 @@ class Search(BaseSearch):
               "such as Experts-Exchange"
 
     def get_params(self, query=None, offset=None, page=None, **kwargs):
-        params = {}
-        params["page"] = page
-        params["q"] = query
-        params["pagesize"] = 15
-        return params
+        return {"page": page, "q": query, "pagesize": 15}
 
     def parse_soup(self, soup):
         """

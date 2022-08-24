@@ -17,13 +17,7 @@ class Search(BaseSearch):
         "Google released a beta version in September 2002 and the official app in January 2006."
 
     def get_params(self, query=None, offset=None, page=None, **kwargs):
-        params = {}
-        params["num"] = 10
-        params["start"] = page
-        params["q"] = query
-        params["client"] = "ubuntu"
-        params["tbm"] = "nws"
-        return params
+        return {"num": 10, "start": page, "q": query, "client": "ubuntu", "tbm": "nws"}
 
     def parse_soup(self, soup):
         """

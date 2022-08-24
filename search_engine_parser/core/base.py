@@ -38,10 +38,8 @@ class SearchItem(dict):
     """
     def __getitem__(self, value):
         """ Allow getting by index and by type ('descriptions', 'links'...)"""
-        try:
+        with suppress(KeyError):
             return super().__getitem__(value)
-        except KeyError:
-            pass
         if not value.endswith('s'):
             value += 's'
         return super().__getitem__(value)
@@ -89,7 +87,7 @@ class SearchResult():
         return len(self.results)
 
     def __repr_(self):
-        return "<SearchResult: {} results>".format(len(self.results))
+        return f"<SearchResult: {len(self.results)} results>"
 
 
 class BaseSearch:
@@ -158,12 +156,11 @@ class BaseSearch:
         return {'q': query, 'page': page}
 
     def headers(self):
-        headers = {
+        return {
             "Cache-Control": 'no-cache',
             "Connection": "keep-alive",
-            "User-Agent": utils.get_rand_user_agent()
+            "User-Agent": utils.get_rand_user_agent(),
         }
-        return headers
 
     def clear_cache(self, all_cache=False):
         """
@@ -191,7 +188,7 @@ class BaseSearch:
         try:
             html, cache_hit = await self.cache_handler.get_source(self.name, url, self.headers(), cache, proxy, proxy_auth)
         except Exception as exc:
-            raise Exception('ERROR: {}\n'.format(exc))
+            raise Exception(f'ERROR: {exc}\n')
         self._cache_hit = cache_hit
         return html
 
@@ -226,10 +223,12 @@ class BaseSearch:
         if kwargs.get("url"):
             new_url = urlparse(kwargs.pop("url"))
             # When passing url without scheme e.g google.de, url is parsed as path
-            if not new_url.netloc:
-                url = url._replace(netloc=new_url.path)
-            else:
-                url = url._replace(netloc=new_url.netloc)
+            url = (
+                url._replace(netloc=new_url.netloc)
+                if new_url.netloc
+                else url._replace(netloc=new_url.path)
+            )
+
             self.base_url = url.geturl()
         self._parsed_url = url._replace(query=urlencode(params))
 
@@ -243,7 +242,7 @@ class BaseSearch:
         # TODO Check if empty results is caused by traffic or answers to query
         # were not found
         if not results:
-            print("ENGINE FAILURE: {}\n".format(self.name))
+            print(f"ENGINE FAILURE: {self.name}\n")
             raise NoResultsOrTrafficError(
                 "The result parsing was unsuccessful. It is either your query could not be found"
                 " or it was flagged as unusual traffic")

@@ -18,9 +18,7 @@ class Search(BaseSearch):
         "As of May 2019, more than 500 hours of video content are uploaded to YouTube every minute"
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["search_query"] = query
-        return params
+        return {"search_query": query}
 
     def parse_soup(self, soup):
         """

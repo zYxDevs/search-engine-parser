@@ -20,10 +20,7 @@ class Search(BaseSearch):
         " after Google, Baidu, Bing, and Yahoo!"
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["text"] = query
-        params["p"] = offset
-        return params
+        return {"text": query, "p": offset}
 
     def parse_soup(self, soup):
         """
@@ -49,7 +46,7 @@ class Search(BaseSearch):
             # Handle read more type texts
             index = title.find("Read more")
             if index >= 0:
-                title = title[0:int(index)]
+                title = title[:int(index)]
             rdict["titles"] = title
 
         if return_type in (ReturnType.FULL, ReturnType.LINK):
