@@ -16,10 +16,7 @@ class Search(BaseSearch):
               "Daphne Koller that offers massive open online courses, specializations, and degrees."
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["query"] =query
-        params["page"] = page
-        return params
+        return {"query": query, "page": page}
 
     def parse_soup(self, soup):
         """
@@ -49,30 +46,29 @@ class Search(BaseSearch):
             rdict["titles"] = title
 
         if return_type in (ReturnType.FULL,):
-            partner_elem = single_result.find('span', class_='partner-name')
-            partner = ''
-            if partner_elem:
+            if partner_elem := single_result.find('span', class_='partner-name'):
                 partner = partner_elem.text
-
-            rating_avg_elem = single_result.find('span', class_='ratings-text')
-            rating_avg = None
-            if rating_avg_elem:
+            else:
+                partner = ''
+            if rating_avg_elem := single_result.find(
+                'span', class_='ratings-text'
+            ):
                 rating_avg = float(rating_avg_elem.text)
-
+            else:
+                rating_avg = None
             enrollment_elem = single_result.find('span', class_='enrollment-number')
             enrolment_number = None
 
             if enrollment_elem:
                 enr_cl_txt = enrollment_elem.text.lower().replace(',', '').replace('.', '')\
-                        .replace('m', '0' * 6).replace('k', '0' * 3)
+                            .replace('m', '0' * 6).replace('k', '0' * 3)
                 if enr_cl_txt.isdigit():
                     enrolment_number = int(enr_cl_txt)
 
-            difficulty_elem = single_result.find('span', class_='difficulty')
-            difficulty = ''
-            if difficulty_elem:
+            if difficulty_elem := single_result.find('span', class_='difficulty'):
                 difficulty = difficulty_elem.text
-
+            else:
+                difficulty = ''
             rating_count_elem = single_result.find('span', class_='ratings-count')
             rating_count = None
             if rating_count_elem:

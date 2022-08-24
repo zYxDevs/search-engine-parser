@@ -18,11 +18,7 @@ class Search(BaseSearch):
         "disciplines."
 
     def get_params(self, query=None, offset=None, page=None, **kwargs):
-        params = {}
-        params["hl"] = "en"
-        params["start"] = page
-        params["q"] = query
-        return params
+        return {"hl": "en", "start": page, "q": query}
 
     def parse_soup(self, soup):
         """
@@ -43,19 +39,12 @@ class Search(BaseSearch):
         rdict = SearchItem()
         r_elem = single_result.find('h3', class_='gs_rt')
         if return_type in (ReturnType.FULL, ReturnType.LINK):
-            link_tag = r_elem.find('a')
-            if link_tag:
-                raw_link = link_tag.get('href')
-            else:
-                raw_link = ''
+            raw_link = link_tag.get('href') if (link_tag := r_elem.find('a')) else ''
             rdict["links"] = raw_link
 
         if return_type in (ReturnType.FULL, return_type.DESCRIPTION):
             desc = single_result.find('div', class_='gs_rs')
-            if desc:
-                desc = desc.text
-            else:
-                desc = ''
+            desc = desc.text if desc else ''
             rdict["descriptions"] = desc
 
         if return_type in (ReturnType.FULL, return_type.TITLE):
@@ -64,19 +53,13 @@ class Search(BaseSearch):
             rdict["titles"] = title
 
         if return_type == ReturnType.FULL:
-            t_elem = single_result.find('span', class_='gs_ct1')
-            if t_elem:
+            if t_elem := single_result.find('span', class_='gs_ct1'):
                 result_type = t_elem.text
             else:
                 result_type = ''
 
-            f_elem = single_result.find('div', class_='gs_or_ggsm')
-            if f_elem:
-                flink_tag = r_elem.find('a')
-                if flink_tag:
-                    file_link = flink_tag.get('href')
-                else:
-                    file_link = ''
+            if f_elem := single_result.find('div', class_='gs_or_ggsm'):
+                file_link = flink_tag.get('href') if (flink_tag := r_elem.find('a')) else ''
             else:
                 file_link = ''
 

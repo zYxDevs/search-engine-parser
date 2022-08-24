@@ -73,7 +73,7 @@ class CacheHandler:
         get_vars = { 'url':url, 'headers':headers }
         if proxy and proxy_auth:
             auth = aiohttp.BasicAuth(*proxy_auth)
-            get_vars.update({'proxy':proxy, 'proxy_auth': auth})
+            get_vars |= {'proxy':proxy, 'proxy_auth': auth}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(**get_vars) as resp:

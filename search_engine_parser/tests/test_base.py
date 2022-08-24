@@ -22,7 +22,7 @@ def get_engines():
         if os.path.isfile(os.path.join(engines_dir, filename)) and filename.endswith('.py') \
                 and filename != '__init__.py':
             engine = filename.split('.py')[0]
-            module = import_module("search_engine_parser.core.engines.{}".format(engine.lower()))
+            module = import_module(f"search_engine_parser.core.engines.{engine.lower()}")
             engine_class = getattr(module, "Search")
             engines.append([engine, engine_class(),])
     return engines
@@ -99,14 +99,12 @@ class TestScraping(unittest.TestCase):
         try:
             cls.vcr_search(*SEARCH_ARGS)
         except NoResultsOrTrafficError:
-            raise unittest.SkipTest(
-                '{} failed due to traffic'.format(
-                    cls.engine))
+            raise unittest.SkipTest(f'{cls.engine} failed due to traffic')
 
     @classmethod
     def vcr_search(cls, *args, **kwargs):
         print(cls.name)
-        with vcr.use_cassette('fixtures/{}-{}-synopsis.yaml'.format(cls.name, args[0].replace(" ", "-")), record="once"):
+        with vcr.use_cassette(f'fixtures/{cls.name}-{args[0].replace(" ", "-")}-synopsis.yaml', record="once"):
             cls.results = cls.engine.search(*args, **kwargs)
 
     @classmethod
@@ -117,12 +115,9 @@ class TestScraping(unittest.TestCase):
         try:
             cls.vcr_search(*SEARCH_ARGS, cache=True)
             if cls.engine._cache_hit == False:
-                assert False, "{} cache - unexpected miss".format(
-                    cls.engine.name)
+                assert False, f"{cls.engine.name} cache - unexpected miss"
         except NoResultsOrTrafficError:
-            raise unittest.SkipTest(
-                '{} failed due to traffic'.format(
-                    cls.engine))
+            raise unittest.SkipTest(f'{cls.engine} failed due to traffic')
 
     @classmethod
     def test_cache_not_used(cls):
@@ -132,12 +127,9 @@ class TestScraping(unittest.TestCase):
         try:
             cls.vcr_search(*SEARCH_ARGS, cache=False)
             if cls.engine._cache_hit == True:
-                assert False, "{} cache - unexpected hit".format(
-                    cls.engine.name)
+                assert False, f"{cls.engine.name} cache - unexpected hit"
         except NoResultsOrTrafficError:
-            raise unittest.SkipTest(
-                '{} failed due to traffic'.format(
-                    cls.engine))
+            raise unittest.SkipTest(f'{cls.engine} failed due to traffic')
 
     @classmethod
     def test_cache_bypassed(cls):
@@ -148,13 +140,10 @@ class TestScraping(unittest.TestCase):
         cls.engine._cache_hit = True
         try:
             cls.vcr_search(*SEARCH_ARGS, cache=False)
-            if cls.engine._cache_hit == True:
-                assert False, "{} cache - not bypassed".format(
-                    cls.engine.name)
+            if cls.engine._cache_hit:
+                assert False, f"{cls.engine.name} cache - not bypassed"
         except NoResultsOrTrafficError:
-            raise unittest.SkipTest(
-                '{} failed due to traffic'.format(
-                    cls.engine))
+            raise unittest.SkipTest(f'{cls.engine} failed due to traffic')
 
     def test_search_urls(self):
         """
@@ -171,14 +160,14 @@ class TestScraping(unittest.TestCase):
         self.assertTrue(len(self.results['links']) >= 4)
         # coursera does not return descriptions for
         # Preaching to the choir
-        if not self.engine.name.lower() == "coursera":
+        if self.engine.name.lower() != "coursera":
             self.assertTrue(len(self.results['descriptions']) >= 4)
         else:
             self.assertTrue(len(self.results["difficulties"]) >= 4)
 
     def test_links(self):
         for link in self.results['links']:
-            print("{}:::::{}".format(self.name, link))
+            print(f"{self.name}:::::{link}")
             # Sometimes googlescholar returns empty links for citation type results
             if not link and self.name.lower() == "googlescholar":
                 continue

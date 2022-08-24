@@ -15,7 +15,7 @@ with open("README.md", "r", encoding="utf8") as fh:
 # Trying to load version directly from `search-engine-parser` module attempts
 # to load __init__.py which will try to load other libraries not yet installed
 with open("search_engine_parser/__init__.py", "rt", encoding="utf8") as f:
-    VERSION = re.search(r'__version__ = "(.*?)"', f.read(), re.M).group(1)
+    VERSION = re.search(r'__version__ = "(.*?)"', f.read(), re.M)[1]
 
 setuptools.setup(
     name="search-engine-parser",

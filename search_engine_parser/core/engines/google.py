@@ -59,7 +59,7 @@ class Search(BaseSearch):
         """
         # Some unneeded details shown such as suggestions should be ignore
         if (single_result.find("h2", class_="wITvVb") and single_result.find("div", class_="LKSyXe"))\
-                or single_result.find("div", class_="X7NTVe"):
+                    or single_result.find("div", class_="X7NTVe"):
             return
 
         results = SearchItem()
@@ -72,8 +72,7 @@ class Search(BaseSearch):
 
         # Get the text and link
         if return_type in (ReturnType.FULL, ReturnType.TITLE):
-            link_tag = r_elem.find('a')
-            if link_tag:
+            if link_tag := r_elem.find('a'):
                 title = link_tag.find('h3').text
             else:
                 r_elem = els[1]
@@ -81,8 +80,7 @@ class Search(BaseSearch):
             results['titles'] = title
 
         if return_type in (ReturnType.FULL, ReturnType.LINK):
-            link_tag = r_elem.find('a')
-            if link_tag:
+            if link_tag := r_elem.find('a'):
                 raw_link = link_tag.get('href')
                 raw_url = urljoin(self.base_url, raw_link)
                 results['raw_urls'] = raw_url
@@ -92,8 +90,7 @@ class Search(BaseSearch):
             # Second Div contains Description
             desc_tag = els[1]
             if return_type in (ReturnType.FULL, ReturnType.LINK) and not results.get('links'):
-                link_tag = desc_tag.find('a')
-                if link_tag:
+                if link_tag := desc_tag.find('a'):
                     desc_tag = els[0]
                     raw_link = link_tag.get('href')
                     raw_url = urljoin(self.base_url, raw_link)

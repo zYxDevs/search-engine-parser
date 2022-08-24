@@ -24,8 +24,7 @@ class Search(BaseSearch):
         "\n\tIn 2015, the site received over 120 million visitors a month."
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["show"] = (math.ceil(page / 5) - 1) * 50
+        params = {"show": (math.ceil(page / 5) - 1) * 50}
         params["q"] = query
         return params
 
@@ -34,10 +33,9 @@ class Search(BaseSearch):
         Parses MyAnimeList for a search query
         """
 
-        # The data is stored in table so find all table rows
-        # The first row is table header
-        res = soup.find('div', class_='js-categories-seasonal js-block-list list')
-        if res:
+        if res := soup.find(
+            'div', class_='js-categories-seasonal js-block-list list'
+        ):
             return res.find_all('tr')[1:]
 
     def parse_single_result(self, single_result, return_type=ReturnType.FULL, **kwargs):

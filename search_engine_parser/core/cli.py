@@ -48,22 +48,20 @@ def display(results, term, args):
 def get_engine_class(engine):
     """ Return the Engine Class """
     try:
-        module = import_module(
-            "search_engine_parser.core.engines.{}".format(
-                engine.lower()))
+        module = import_module(f"search_engine_parser.core.engines.{engine.lower()}")
         return getattr(module, "Search")
-    except (ImportError, ModuleNotFoundError):
-        sys.exit('Engine < {} > does not exist'.format(engine))
+    except ImportError:
+        sys.exit(f'Engine < {engine} > does not exist')
 
 
 def show_summary(term, engine_class):
     """ Show the summary of an Engine"""
-    print("\t{}".format(term.magenta(engine_class.name)))
+    print(f"\t{term.magenta(engine_class.name)}")
     print("\t-----------------------------------------------------")
     print(engine_class.summary)
 
 
-def main(args):  # pylint: disable=too-many-branches
+def main(args):    # pylint: disable=too-many-branches
     """
         Executes logic from parsed arguments
     """
@@ -89,9 +87,9 @@ def main(args):  # pylint: disable=too-many-branches
             args.query, args.page, return_type=ReturnType(args.type), url=args.url, proxy=args.proxy, proxy_auth=(args.proxy_user, args.proxy_password))
         duration = datetime.now() - start
         display(results, term, args)
-        print("Total search took -> %s seconds" % (duration))
+        print(f"Total search took -> {duration} seconds")
     except NoResultsOrTrafficError as exc:
-        print('\n', '{}'.format(term.red(str(exc))))
+        print('\n', f'{term.red(str(exc))}')
 
 
 def create_parser():
@@ -100,7 +98,10 @@ def create_parser():
     """
     parser = argparse.ArgumentParser(description='SearchEngineParser', prog="pysearch")
 
-    parser.add_argument('-V', '--version', action="version", version="%(prog)s v" + __version__)
+    parser.add_argument(
+        '-V', '--version', action="version", version=f"%(prog)s v{__version__}"
+    )
+
 
     parser.add_argument(
         '-e', '--engine',

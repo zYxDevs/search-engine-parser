@@ -20,10 +20,7 @@ class Search(BaseSearch):
         "in the United States (since 2014)."
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["p"] = query
-        params["b"] = offset
-        return params
+        return {"p": query, "b": offset}
 
     def parse_soup(self, soup):
         """

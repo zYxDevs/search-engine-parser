@@ -18,14 +18,14 @@ class Search(BaseSearch):
         "but the results returned lack quality compared to Google or even Bing and Yahoo."
 
     def get_params(self, query=None, page=None, offset=None, **kwargs):
-        params = {}
-        params["o"] = 0
-        params["l"] = "dir"
-        params["qo"] = "pagination"
-        params["q"] = query
-        params["qsrc"] = 998
-        params["page"] = page
-        return params
+        return {
+            "o": 0,
+            "l": "dir",
+            "qo": "pagination",
+            "q": query,
+            "qsrc": 998,
+            "page": page,
+        }
 
     def parse_soup(self, soup):
         """
